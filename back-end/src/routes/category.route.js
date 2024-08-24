@@ -17,9 +17,7 @@ router.route("/add_category").post(upload.single("image"), addCategory);
 
 router.route("/delete_category/:id").delete(deleteCategory);
 
-router
-  .route("/update_category/:id")
-  .put(upload.single("image"), editCategory);
+router.route("/update_category/:id").put(upload.single("image"), editCategory);
 
 router.route("/list_categories").get(listCategories);
 

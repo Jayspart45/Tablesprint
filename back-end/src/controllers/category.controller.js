@@ -7,6 +7,11 @@ import { Op } from "sequelize";
 // Add a new category
 export const addCategory = asyncHandler(async (req, res) => {
   const { name, sequence } = req.body;
+  if (!name || !sequence) {
+    return res
+      .status(400)
+      .json(new ApiResponse(400, null, "name and sequence are required."));
+  }
   const image_url = req.file ? req.file.path : null;
 
   let url = null;
@@ -30,9 +35,13 @@ export const getCategory = asyncHandler(async (req, res) => {
 
   const category = await Category.findByPk(id);
   if (!category) {
-    return res.status(404).json(new ApiResponse(404, null, "Category not found"));
+    return res
+      .status(404)
+      .json(new ApiResponse(404, null, "Category not found"));
   }
-  res.status(200).json(new ApiResponse(200, category, "Category retrieved successfully"));
+  res
+    .status(200)
+    .json(new ApiResponse(200, category, "Category retrieved successfully"));
 });
 
 // List categories with pagination and search
@@ -71,34 +80,68 @@ export const listCategories = asyncHandler(async (req, res) => {
 export const editCategory = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const { name, sequence, status } = req.body;
-  const image_url = req.file ? req.file.path : null;
+  const imageFile = req.file ? req.file.path : null;
 
-  // Fetch the current category to retain the existing image URL if no new image is provided
+  let updatedImageUrl = null;
+
+  if (!id) {
+    return res
+      .status(400)
+      .json(new ApiResponse(400, null, "Category ID is required."));
+  }
+
+  // Debug logging
+  console.log("Editing category with ID:", id);
+
+  // Fetch the existing category to get the current image URL if not updated
   const existingCategory = await Category.findByPk(id);
 
   if (!existingCategory) {
-    return res.status(404).json(new ApiResponse(404, null, "Category not found"));
+    console.log("Category not found with ID:", id); // Log if category is not found
+    return res
+      .status(404)
+      .json(new ApiResponse(404, null, "Category not found."));
   }
 
-  let updatedImageUrl = existingCategory.image_url;
-
-  if (image_url) {
+  if (imageFile) {
     // Upload the new image and get the URL
-    updatedImageUrl = await uploadOnImgbb(image_url);
+    updatedImageUrl = await uploadOnImgbb(imageFile);
+  } else {
+    // Retain the existing image URL if no new image is provided
+    updatedImageUrl = existingCategory.image_url;
   }
 
-  const [updated] = await Category.update(
-    { name, sequence, status, image_url: updatedImageUrl },
-    { where: { id } }
-  );
+  // Update only the fields provided
+  const updatedFields = {
+    ...(name && { name }),
+    ...(sequence && { sequence }),
+    ...(status && { status }),
+    ...(updatedImageUrl && { image_url: updatedImageUrl }), // Use updatedImageUrl if it's set
+  };
 
-  if (updated === 0) {
-    return res.status(404).json(new ApiResponse(404, null, "Category not found"));
+  // Debug logging
+  console.log("Fields to update:", updatedFields);
+
+  // Perform the update
+  const [updated] = await Category.update(updatedFields, {
+    where: { id },
+    returning: true, // Get the updated rows back
+  });
+
+  if (updated) {
+    // Fetch the updated category
+    const updatedCategory = await Category.findByPk(id);
+
+    res
+      .status(200)
+      .json(
+        new ApiResponse(200, updatedCategory, "Category updated successfully.")
+      );
+  } else {
+    res.status(404).json(new ApiResponse(404, null, "Category not found."));
   }
-
-  const updatedCategory = await Category.findByPk(id);
-  res.status(200).json(new ApiResponse(200, updatedCategory, "Category updated successfully"));
 });
+
 
 // Delete a category
 export const deleteCategory = asyncHandler(async (req, res) => {
@@ -107,8 +150,12 @@ export const deleteCategory = asyncHandler(async (req, res) => {
   const deleted = await Category.destroy({ where: { id } });
 
   if (deleted === 0) {
-    return res.status(404).json(new ApiResponse(404, null, "Category not found"));
+    return res
+      .status(404)
+      .json(new ApiResponse(404, null, "Category not found"));
   }
 
-  res.status(200).json(new ApiResponse(200, null, "Category deleted successfully"));
+  res
+    .status(200)
+    .json(new ApiResponse(200, null, "Category deleted successfully"));
 });

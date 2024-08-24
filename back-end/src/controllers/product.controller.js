@@ -54,17 +54,18 @@ export const getProducts = asyncHandler(async (req, res) => {
 });
 
 // Add a new product
+// Add a new product
 export const addProduct = asyncHandler(async (req, res) => {
   const { category_id, subcategory_id, name } = req.body;
-  const image_url = req.file ? req.file.path : null;
-  console.log(req.file);
+  const imageFile = req.file ? req.file.path : null;
 
-  let url = null;
+  let imageUrl = null;
 
-  if (image_url) {
-    url = await uploadOnImgbb(image_url);
+  if (imageFile) {
+    imageUrl = await uploadOnImgbb(imageFile);
   }
 
+  // Validate required fields
   if (!category_id || !subcategory_id || !name) {
     return res
       .status(400)
@@ -77,17 +78,36 @@ export const addProduct = asyncHandler(async (req, res) => {
       );
   }
 
+  // Check if category exists
+  const category = await Category.findByPk(category_id);
+  if (!category) {
+    return res
+      .status(400)
+      .json(new ApiResponse(400, null, "Category does not exist."));
+  }
+
+  // Check if subcategory exists
+  const subcategory = await Subcategory.findByPk(subcategory_id);
+  if (!subcategory) {
+    return res
+      .status(400)
+      .json(new ApiResponse(400, null, "Subcategory does not exist."));
+  }
+
+  // Create the product
   const newProduct = await Product.create({
     category_id,
     subcategory_id,
     name,
-    image_url: url,
+    image_url: imageUrl,
   });
+
   res
     .status(201)
     .json(new ApiResponse(201, newProduct, "Product added successfully."));
 });
 
+  
 export const updateProduct = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const { category_id, subcategory_id, name } = req.body;
