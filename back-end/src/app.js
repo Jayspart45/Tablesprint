@@ -2,9 +2,9 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import errorHandler from "./middleware/errorHandler.middleware.js";
+import bodyParser from "body-parser";
 
 const app = express();
-
 
 const allowedOrigins = (process.env.ORIGIN || "")
   .split(",")
@@ -20,16 +20,20 @@ const corsOptions = {
       callback(new Error("Not allowed by CORS"));
     }
   },
-  credentials: true, 
+  credentials: true,
 };
 
 app.use(cors(corsOptions));
-app.use(express.urlencoded({ extended: true, limit: "16kb" }));
-app.use(express.json({ limit: "16kb" }));
+app.use(express.urlencoded({ extended: true, limit: "20kb" }));
+app.use(express.json({ limit: "20kb" }));
 app.use(express.static("public"));
 app.use(cookieParser());
 
+
 import authRouter from "./routes/auth.route.js";
+import categoryRouter from "./routes/category.route.js";
+import subCategoryRouter from "./routes/subcategory.route.js";
+import productRouter from "./routes/product.route.js";
 
 // Health check sever
 app.get("/", (req, res) => {
@@ -38,6 +42,9 @@ app.get("/", (req, res) => {
 
 // Routes
 app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/categories", categoryRouter);
+app.use("/api/v1/sub_categories", subCategoryRouter);
+app.use("/api/v1/products", productRouter);
 
 // Error Handler middleware
 app.use(errorHandler);

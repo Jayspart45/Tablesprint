@@ -1,45 +1,42 @@
-import { v2 as cloudinary } from "cloudinary";
-
-import fs from "fs";
-
-import util from "util";
-
-import dotenv from "dotenv";
+import axios from 'axios';
+import fs from 'fs';
+import util from 'util';
+import dotenv from 'dotenv';
 
 dotenv.config();
 const unlinkFile = util.promisify(fs.unlink);
 
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
+const API_KEY = process.env.IMGBB_API_KEY; 
 
-/**
- * Uploads a single file to Cloudinary.
- * @param {string} localFilePath - The path to the local file to be uploaded.
- * @returns {Promise<string|null>} - The URL of the uploaded file, or null if the upload failed.
- */
-const uploadOnCloudinary = async (localFilePath) => {
-  console.log("cloud", localFilePath);
+const uploadOnImgbb = async (localFilePath) => {
+  console.log("Uploading to Imgbb:", localFilePath);
   try {
     if (!localFilePath) {
       return null;
     }
-    const response = await cloudinary.uploader.upload(localFilePath, {
-      resource_type: "auto",
-    });
-    console.log("File uploaded to Cloudinary:", response.url);
 
-    return response.url;
+    const imageFile = fs.readFileSync(localFilePath, { encoding: 'base64' });
+    
+    const formData = new URLSearchParams();
+    formData.append('image', imageFile);
+
+    const response = await axios.post(`https://api.imgbb.com/1/upload?key=${API_KEY}`, formData.toString(), {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    });
+
+    console.log("File uploaded to Imgbb:", response.data.data.url);
+
+    return response.data.data.url;
   } catch (error) {
-    console.error("Error uploading to Cloudinary:", error.message);
+    console.error("Error uploading to Imgbb:", error.message);
     return null;
   } finally {
     if (fs.existsSync(localFilePath)) {
-      await unlinkFile(localFilePath); // Remove the locally saved temporary file
+      await unlinkFile(localFilePath); 
     }
   }
 };
 
-export { uploadOnCloudinary };
+export { uploadOnImgbb };

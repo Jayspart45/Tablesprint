@@ -1,8 +1,19 @@
-import Router from "express"
+import { Router } from "express";
+import {
+  getSubcategories,
+  addSubcategory,
+  updateSubcategory,
+  deleteSubcategory,
+} from "../controllers/subcategory.controller.js";
+import { upload } from "../middleware/multer.middleware.js";
 
-const router = Router()
+const router = Router();
 
-router.route("/get_sub_category").get()
-router.route("/add_sub_category").post()
-router.route("/delete_sub_category").delete()
-router.route("/update_sub_category").put()
+router.route("/list_subcategories").get(getSubcategories);
+router.route("/add_subcategory").post(upload.single("image"), addSubcategory);
+router
+  .route("/update_subcategory/:id")
+  .put(upload.single("image"), updateSubcategory);
+router.route("/delete_subcategory/:id").delete(deleteSubcategory);
+
+export default router;
