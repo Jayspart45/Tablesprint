@@ -13,7 +13,7 @@ router.route("/list_subcategories").get(getSubcategories);
 router.route("/add_subcategory").post(upload.single("image_url"), addSubcategory);
 router
   .route("/update_subcategory/:id")
-  .put(upload.single("image"), updateSubcategory);
+  .put(upload.single("image_url"), updateSubcategory);
 router.route("/delete_subcategory/:id").delete(deleteSubcategory);
 
 export default router;

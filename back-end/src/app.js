@@ -43,7 +43,7 @@ app.get("/", (req, res) => {
 // Routes
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/categories", categoryRouter);
-app.use("/api/v1/sub_categories", subCategoryRouter);
+app.use("/api/v1/subcategories", subCategoryRouter);
 app.use("/api/v1/products", productRouter);
 
 // Error Handler middleware

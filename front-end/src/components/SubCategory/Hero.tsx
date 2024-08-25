@@ -2,13 +2,13 @@ import { DataTable } from "../../shared/DataTable";
 import { ColumnDef } from "@tanstack/react-table";
 import { FaEdit, FaSort } from "react-icons/fa";
 import { MdOutlineDeleteOutline } from "react-icons/md";
-import { Category } from "./CategoryComponent";
+import { SubCategory } from "./SubCategoryComponent";
 
 interface HeroProps {
-  data: Category[];
+  data: SubCategory[];
   setView: (view: "list" | "add" | "edit") => void;
-  handleEdit: (category: Category) => void;
-  handleDelete: (category: Category) => void;
+  handleEdit: (subcategory: SubCategory) => void;
+  handleDelete: (subcategory: SubCategory) => void;
 }
 
 const Hero: React.FC<HeroProps> = ({
@@ -17,7 +17,7 @@ const Hero: React.FC<HeroProps> = ({
   handleEdit,
   handleDelete,
 }) => {
-  const columns: ColumnDef<Category>[] = [
+  const columns: ColumnDef<SubCategory>[] = [
     {
       accessorKey: "id",
       header: ({ column }) => (
@@ -29,7 +29,7 @@ const Hero: React.FC<HeroProps> = ({
           <FaSort />
         </button>
       ),
-      enableSorting: true, 
+      enableSorting: true,
     },
     {
       accessorKey: "name",
@@ -38,7 +38,20 @@ const Hero: React.FC<HeroProps> = ({
           className="flex items-center"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Category Name
+          SubCategory Name
+          <FaSort />
+        </button>
+      ),
+      enableSorting: true,
+    },
+    {
+      accessorKey: "Category.name",
+      header: ({ column }) => (
+        <button
+          className="flex items-center"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Category
           <FaSort />
         </button>
       ),
@@ -50,7 +63,7 @@ const Hero: React.FC<HeroProps> = ({
       cell: ({ getValue }) => (
         <img
           src={getValue() as string}
-          alt="Category"
+          alt="SubCategory"
           style={{ width: "50px", height: "auto" }}
         />
       ),
@@ -79,7 +92,7 @@ const Hero: React.FC<HeroProps> = ({
           <FaSort />
         </button>
       ),
-      enableSorting: true, // Explicitly enabling sorting
+      enableSorting: true,
     },
     {
       id: "action",
@@ -94,13 +107,13 @@ const Hero: React.FC<HeroProps> = ({
           </button>
         </div>
       ),
-      enableSorting: false, 
+      enableSorting: false,
     },
   ];
 
   return (
     <div>
-      <DataTable title={"Category"}  data={data} columns={columns} setView={setView} />
+      <DataTable title={"Sub Category"} data={data} columns={columns} setView={setView} />
     </div>
   );
 };

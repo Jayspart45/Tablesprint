@@ -22,15 +22,17 @@ import Input from "./Input";
 import { BiCategory } from "react-icons/bi";
 
 interface DataTableProps<TData, TValue> {
+  title: string;
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   setView: (view: "list" | "add" | "edit") => void;
 }
 
 export function DataTable<TData, TValue>({
+  title,
   columns,
   data,
-  setView
+  setView,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -54,9 +56,9 @@ export function DataTable<TData, TValue>({
     <div className="rounded-md border">
       <div className="flex items-center py-4 justify-evenly">
         <h1 className="flex items-center gap-2 font-semibold">
-        <BiCategory size={24} />
-          
-          Category</h1>
+          <BiCategory size={24} />
+          {title}
+        </h1>
 
         <Input
           placeholder="Search by name"
@@ -66,7 +68,12 @@ export function DataTable<TData, TValue>({
           }
           className="w-full max-w-lg"
         />
-        <button className="bg-primary text-secondary px-4 py-2 rounded-xl" onClick={() => setView("add")}>Add Category</button>
+        <button
+          className="bg-primary text-secondary px-4 py-2 rounded-xl"
+          onClick={() => setView("add")}
+        >
+          Add Category
+        </button>
       </div>
 
       <Table>

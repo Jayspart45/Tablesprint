@@ -29,31 +29,28 @@ export const getSubcategories = asyncHandler(async (req, res) => {
     include: [
       {
         model: Category,
-        attributes: ["id", "name"], 
+        attributes: ["id", "name"],
       },
     ],
-    attributes: ['id', 'name', 'status', 'sequence', 'image_url']
-
+    attributes: ["id", "name", "status", "sequence", "image_url"],
   });
 
-  res.status(200).json(
-    new ApiResponse(
-      200,
-      {
-        total: count,
-        page,
-        pageSize,
-        data: rows,
-      },
-      "Subcategories retrieved successfully."
-    )
-  );
+  res.status(200).json({
+    success: true,
+    data: rows,
+    pagination: {
+      total: count,
+      page,
+      pageSize,
+    },
+  });
 });
-
 // Add a new subcategory
 export const addSubcategory = asyncHandler(async (req, res) => {
-  const { category_id, name, sequence } = req.body;
+  const { category_id, name, sequence } =  Object.assign({},req.body)
   const imageFile = req.file ? req.file.path : null;
+  console.log( Object.assign({},req.body));
+  
 
   let imageUrl = null;
 
