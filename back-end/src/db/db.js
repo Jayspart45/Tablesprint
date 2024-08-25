@@ -20,7 +20,6 @@ const connectDB = async () => {
 
 export default connectDB;
 
-// Sequelize setup for ORM
 const sequelize = new Sequelize({
   dialect: "postgres",
   host: process.env.PG_HOST,
