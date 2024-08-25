@@ -3,6 +3,7 @@ import { statusCode as code } from "../constant.js";
 const errorHandler = (err, req, res, next) => {
   const statusCode = err.statusCode || 500;
   res.status(statusCode);
+  console.log(err);
 
   switch (statusCode) {
     case code.VALIDATION_ERROR:

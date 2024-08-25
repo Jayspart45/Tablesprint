@@ -98,7 +98,6 @@ export const resetPassword = asyncHandler(async (req, res) => {
   if (!email || !token || !password) {
     throw new ApiError(400, "Email, token, and new password are required.");
   }
-  console.log(token);
 
   const decoded = jwt.verify(token.trim(), "sdbckjvsdvkjsdvjkbddvjbejb78323");
 

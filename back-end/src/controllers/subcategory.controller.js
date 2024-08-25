@@ -47,9 +47,7 @@ export const getSubcategories = asyncHandler(async (req, res) => {
 });
 export const addSubcategory = asyncHandler(async (req, res) => {
   const { category_id, name, sequence } =  Object.assign({},req.body)
-  const imageFile = req.file ? req.file.path : null;
-  console.log( Object.assign({},req.body));
-  
+  const imageFile = req.file ? req.file.path : null;  
 
   let imageUrl = null;
 
@@ -101,13 +99,10 @@ export const updateSubcategory = asyncHandler(async (req, res) => {
       .json(new ApiResponse(400, null, "Subcategory ID is required."));
   }
 
-  console.log("Updating subcategory with ID:", id);
 
   const existingSubcategory = await Subcategory.findByPk(id);
-  console.log(existingSubcategory);
 
   if (!existingSubcategory) {
-    console.log("Subcategory not found with ID:", id); // Log if subcategory is not found
     return res
       .status(404)
       .json(new ApiResponse(404, null, "Subcategory not found."));
@@ -125,10 +120,9 @@ export const updateSubcategory = asyncHandler(async (req, res) => {
     ...(sequence && { sequence }),
     ...(status && { status }),
 
-    ...(updatedImageUrl && { image_url: updatedImageUrl }), // Use updatedImageUrl if it's set
+    ...(updatedImageUrl && { image_url: updatedImageUrl }), 
   };
 
-  console.log("Fields to update:", updatedFields);
 
   const [updated] = await Subcategory.update(updatedFields, {
     where: { id },

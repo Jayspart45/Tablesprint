@@ -87,12 +87,9 @@ export const editCategory = asyncHandler(async (req, res) => {
       .json(new ApiResponse(400, null, "Category ID is required."));
   }
 
-  console.log("Editing category with ID:", id);
-
   const existingCategory = await Category.findByPk(id);
 
   if (!existingCategory) {
-    console.log("Category not found with ID:", id); // Log if category is not found
     return res
       .status(404)
       .json(new ApiResponse(404, null, "Category not found."));
@@ -108,10 +105,8 @@ export const editCategory = asyncHandler(async (req, res) => {
     ...(name && { name }),
     ...(sequence && { sequence }),
     ...(status && { status }),
-    ...(updatedImageUrl && { image_url: updatedImageUrl }), // Use updatedImageUrl if it's set
+    ...(updatedImageUrl && { image_url: updatedImageUrl }), 
   };
-
-  console.log("Fields to update:", updatedFields);
 
   const [updated] = await Category.update(updatedFields, {
     where: { id },

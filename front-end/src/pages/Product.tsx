@@ -30,7 +30,6 @@ const Product: React.FC = () => {
       try {
         const products = await getProductData();
         setData(products);
-        console.log(products);
 
         const categoriesData = await getCategoryData(); // Fetch categories
         setCategories(categoriesData);

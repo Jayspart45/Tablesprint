@@ -117,12 +117,10 @@ export const updateProduct = asyncHandler(async (req, res) => {
       .json(new ApiResponse(400, null, "Product ID is required."));
   }
 
-  console.log("Updating product with ID:", id);
 
   const existingProduct = await Product.findByPk(id);
 
   if (!existingProduct) {
-    console.log("Product not found with ID:", id); // Log if product is not found
     return res
       .status(404)
       .json(new ApiResponse(404, null, "Product not found."));
@@ -133,10 +131,9 @@ export const updateProduct = asyncHandler(async (req, res) => {
     ...(subcategory_id && { subcategory_id }),
     ...(name && { name }),
     ...(status && { status }),
-    ...(imageUrl && { image_url: imageUrl }), // Use imageUrl if it's set
+    ...(imageUrl && { image_url: imageUrl }), 
   };
 
-  console.log("Fields to update:", updatedFields);
 
   const [updated] = await Product.update(updatedFields, {
     where: { id },

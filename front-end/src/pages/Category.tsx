@@ -23,7 +23,6 @@ const Category: React.FC = () => {
       setLoading(true);
       try {
         const res = await getCategoryData();
-        console.log(res);
 
         setData(res);
       } catch (error) {
@@ -37,8 +36,6 @@ const Category: React.FC = () => {
   }, []);
 
   const handleEdit = (category: Category) => {
-    console.log(category);
-
     setEditCategoryData(category);
     setView("edit");
   };

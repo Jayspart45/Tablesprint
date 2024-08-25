@@ -27,7 +27,6 @@ const SubCategory: React.FC = () => {
       try {
         const res = await getSubCategoryData();
         setData(res);
-        console.log(res);
 
         const categoriesData = await getCategoryData();
         setCategories(categoriesData);

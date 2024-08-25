@@ -16,7 +16,6 @@ export const generateAccessToken = asyncHandler(async (userId) => {
 });
 export const generateForgotToken = asyncHandler(async (userId) => {
   const user = await User.findByPk(userId);
-  console.log(process.env.FORGET_TOKEN_SECRET);
 
   const forgetToken = jwt.sign(
     {
