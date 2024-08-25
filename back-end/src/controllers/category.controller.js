@@ -63,6 +63,7 @@ export const listCategories = asyncHandler(async (req, res) => {
     order: [[sortField, sortOrder]],
     limit: pageSize,
     offset,
+    attributes: ['id', 'name', 'status', 'sequence', 'image_url']
   });
 
   res.status(200).json({

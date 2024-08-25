@@ -37,6 +37,8 @@ export const getProducts = asyncHandler(async (req, res) => {
         attributes: ["id", "name"], // Specify which attributes to include from Subcategory
       },
     ],
+    attributes: ['id', 'name', 'status', 'sequence', 'image_url']
+
   });
 
   res.status(200).json(
@@ -110,7 +112,7 @@ export const addProduct = asyncHandler(async (req, res) => {
   
 export const updateProduct = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { category_id, subcategory_id, name } = req.body;
+  const { category_id, subcategory_id, name,status } = req.body;
   const imageFile = req.file ? req.file.path : null;
 
   let imageUrl = null;
@@ -143,6 +145,7 @@ export const updateProduct = asyncHandler(async (req, res) => {
     ...(category_id && { category_id }),
     ...(subcategory_id && { subcategory_id }),
     ...(name && { name }),
+    ...(status && { status }),
     ...(imageUrl && { image_url: imageUrl }), // Use imageUrl if it's set
   };
 

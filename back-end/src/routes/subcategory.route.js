@@ -10,7 +10,7 @@ import { upload } from "../middleware/multer.middleware.js";
 const router = Router();
 
 router.route("/list_subcategories").get(getSubcategories);
-router.route("/add_subcategory").post(upload.single("image"), addSubcategory);
+router.route("/add_subcategory").post(upload.single("image_url"), addSubcategory);
 router
   .route("/update_subcategory/:id")
   .put(upload.single("image"), updateSubcategory);
