@@ -19,6 +19,11 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE'
       },
+      status: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        defaultValue: "active",
+      },
       name: {
         type: Sequelize.STRING,
         allowNull: false

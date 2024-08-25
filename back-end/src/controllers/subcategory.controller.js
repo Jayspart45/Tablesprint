@@ -45,7 +45,6 @@ export const getSubcategories = asyncHandler(async (req, res) => {
     },
   });
 });
-// Add a new subcategory
 export const addSubcategory = asyncHandler(async (req, res) => {
   const { category_id, name, sequence } =  Object.assign({},req.body)
   const imageFile = req.file ? req.file.path : null;
@@ -58,7 +57,6 @@ export const addSubcategory = asyncHandler(async (req, res) => {
     imageUrl = await uploadOnImgbb(imageFile);
   }
 
-  // Validate required fields
   if (!category_id || !name || !sequence) {
     return res
       .status(400)
@@ -71,7 +69,6 @@ export const addSubcategory = asyncHandler(async (req, res) => {
       );
   }
 
-  // Check if category exists
   const category = await Category.findByPk(category_id);
   if (!category) {
     return res
@@ -79,7 +76,6 @@ export const addSubcategory = asyncHandler(async (req, res) => {
       .json(new ApiResponse(400, null, "Category does not exist."));
   }
 
-  // Create the subcategory
   const newSubcategory = await Subcategory.create({
     category_id,
     name,
@@ -94,7 +90,6 @@ export const addSubcategory = asyncHandler(async (req, res) => {
     );
 });
 
-// Update an existing subcategory
 export const updateSubcategory = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const { category_id, name, sequence, status } = req.body;
@@ -106,10 +101,8 @@ export const updateSubcategory = asyncHandler(async (req, res) => {
       .json(new ApiResponse(400, null, "Subcategory ID is required."));
   }
 
-  // Debug logging
   console.log("Updating subcategory with ID:", id);
 
-  // Fetch the existing subcategory to get the current image URL if not updated
   const existingSubcategory = await Subcategory.findByPk(id);
   console.log(existingSubcategory);
 
@@ -123,11 +116,9 @@ export const updateSubcategory = asyncHandler(async (req, res) => {
   let updatedImageUrl = existingSubcategory.image_url;
 
   if (imageFile) {
-    // Upload the new image and get the URL
     updatedImageUrl = await uploadOnImgbb(imageFile);
   }
 
-  // Update only the fields provided
   const updatedFields = {
     ...(category_id && { category_id }),
     ...(name && { name }),
@@ -137,13 +128,11 @@ export const updateSubcategory = asyncHandler(async (req, res) => {
     ...(updatedImageUrl && { image_url: updatedImageUrl }), // Use updatedImageUrl if it's set
   };
 
-  // Debug logging
   console.log("Fields to update:", updatedFields);
 
-  // Perform the update
   const [updated] = await Subcategory.update(updatedFields, {
     where: { id },
-    returning: true, // Get the updated rows back
+    returning: true,
   });
 
   if (updated) {
@@ -163,7 +152,6 @@ export const updateSubcategory = asyncHandler(async (req, res) => {
   }
 });
 
-// Delete a subcategory
 export const deleteSubcategory = asyncHandler(async (req, res) => {
   const { id } = req.params;
 

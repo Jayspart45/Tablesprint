@@ -1,7 +1,6 @@
 import nodemailer from "nodemailer";
 import { ApiError } from "./ApiError.js";
 
-// Create a Nodemailer transporter object using Gmail
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {

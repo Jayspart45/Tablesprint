@@ -67,7 +67,7 @@ const Category: React.FC = () => {
   const handleEditSubmit = async (formData: FormData) => {
     if (editCategoryData) {
       try {
-        await editCategory(editCategoryData.id, formData); // Pass id and formData
+        await editCategory(editCategoryData.id, formData); 
         const updatedData = await getCategoryData();
         setData(updatedData);
         setView("list");

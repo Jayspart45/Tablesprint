@@ -17,6 +17,9 @@ module.exports = {
       },
     },
     extend: {
+      backgroundImage: {
+        bg_image: "url('./src/assets/bg.svg')",
+      },
       colors: {
         primary: "#662671",
         accent: "#F4EDAF",

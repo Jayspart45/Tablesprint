@@ -83,7 +83,15 @@ const Hero: React.FC<HeroProps> = ({
           <FaSort />
         </button>
       ),
-      enableSorting: true, // Explicitly enabling sorting
+      cell: ({ row }) => (
+        <span
+          className={`${
+            row.original.status == "active" ? "text-green-500" : "text-red-500"
+          }`}
+        >
+          {row.original.status == "active"?"Active":"InActive"}
+        </span>
+      ),
     },
     {
       id: "action",

@@ -16,6 +16,11 @@ const Subcategory = sequelize.define('Subcategory', {
       key: 'id',
     },
   },
+  status: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    defaultValue: "active",
+  },
   name: {
     type: DataTypes.STRING,
     allowNull: false,

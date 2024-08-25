@@ -33,6 +33,11 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
+      status: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        defaultValue: "active",
+      },
       image_url: {
         type: Sequelize.STRING,
         allowNull: true

@@ -10,6 +10,7 @@ export type SubCategory = {
   sequence: string;
   image_url: string;
   categoryId: number;
+  status: string;
   Category?: { id: number };
 };
 
@@ -18,7 +19,7 @@ interface SubcategoryComponentProps {
   data?: SubCategory;
   onSubmit: (formData: FormData) => void;
   setView: (view: "list" | "add" | "edit") => void;
-  categories: { id: number; name: string }[]; // Pass available categories
+  categories: { id: number; name: string }[]; 
 }
 
 const SubCategoryComponent: React.FC<SubcategoryComponentProps> = ({
@@ -37,7 +38,7 @@ const SubCategoryComponent: React.FC<SubcategoryComponentProps> = ({
     subcategoryName: "",
     sequence: "",
     imageFile: null,
-    categoryId: categories.length > 0 ? categories[0].id : 0, // Default to first category
+    categoryId: categories.length > 0 ? categories[0].id : 0, 
   });
 
   useEffect(() => {
@@ -99,7 +100,6 @@ const SubCategoryComponent: React.FC<SubcategoryComponentProps> = ({
     }
   };
 
-  // Clean up object URLs created for image previews
   useEffect(() => {
     return () => {
       if (formData.imageFile) {

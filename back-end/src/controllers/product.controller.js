@@ -30,11 +30,11 @@ export const getProducts = asyncHandler(async (req, res) => {
     include: [
       {
         model: Category,
-        attributes: ["id", "name"], // Specify which attributes to include from Category
+        attributes: ["id", "name"], 
       },
       {
         model: Subcategory,
-        attributes: ["id", "name"], // Specify which attributes to include from Subcategory
+        attributes: ["id", "name"],
       },
     ],
     attributes: ["id", "name", "status", "image_url"],
@@ -51,8 +51,7 @@ export const getProducts = asyncHandler(async (req, res) => {
   });
 });
 
-// Add a new product
-// Add a new product
+
 export const addProduct = asyncHandler(async (req, res) => {
   const { category_id, subcategory_id, name } = req.body;
   const imageFile = req.file ? req.file.path : null;
@@ -63,7 +62,6 @@ export const addProduct = asyncHandler(async (req, res) => {
     imageUrl = await uploadOnImgbb(imageFile);
   }
 
-  // Validate required fields
   if (!category_id || !subcategory_id || !name) {
     return res
       .status(400)
@@ -76,7 +74,6 @@ export const addProduct = asyncHandler(async (req, res) => {
       );
   }
 
-  // Check if category exists
   const category = await Category.findByPk(category_id);
   if (!category) {
     return res
@@ -84,7 +81,6 @@ export const addProduct = asyncHandler(async (req, res) => {
       .json(new ApiResponse(400, null, "Category does not exist."));
   }
 
-  // Check if subcategory exists
   const subcategory = await Subcategory.findByPk(subcategory_id);
   if (!subcategory) {
     return res
@@ -92,7 +88,6 @@ export const addProduct = asyncHandler(async (req, res) => {
       .json(new ApiResponse(400, null, "Subcategory does not exist."));
   }
 
-  // Create the product
   const newProduct = await Product.create({
     category_id,
     subcategory_id,
@@ -122,10 +117,8 @@ export const updateProduct = asyncHandler(async (req, res) => {
       .json(new ApiResponse(400, null, "Product ID is required."));
   }
 
-  // Debug logging
   console.log("Updating product with ID:", id);
 
-  // Fetch the existing product to get the current image URL if not updated
   const existingProduct = await Product.findByPk(id);
 
   if (!existingProduct) {
@@ -135,7 +128,6 @@ export const updateProduct = asyncHandler(async (req, res) => {
       .json(new ApiResponse(404, null, "Product not found."));
   }
 
-  // Update only the fields provided
   const updatedFields = {
     ...(category_id && { category_id }),
     ...(subcategory_id && { subcategory_id }),
@@ -144,26 +136,23 @@ export const updateProduct = asyncHandler(async (req, res) => {
     ...(imageUrl && { image_url: imageUrl }), // Use imageUrl if it's set
   };
 
-  // Debug logging
   console.log("Fields to update:", updatedFields);
 
-  // Perform the update
   const [updated] = await Product.update(updatedFields, {
     where: { id },
-    returning: true, // Get the updated rows back
+    returning: true, 
   });
 
   if (updated) {
-    // Fetch the updated product with associations
     const updatedProduct = await Product.findByPk(id, {
       include: [
         {
           model: Category,
-          attributes: ["id", "name"], // Specify attributes from Category
+          attributes: ["id", "name"], 
         },
         {
           model: Subcategory,
-          attributes: ["id", "name"], // Specify attributes from Subcategory
+          attributes: ["id", "name"], 
         },
       ],
     });
@@ -178,7 +167,6 @@ export const updateProduct = asyncHandler(async (req, res) => {
   }
 });
 
-// Delete a product
 export const deleteProduct = asyncHandler(async (req, res) => {
   const { id } = req.params;
 

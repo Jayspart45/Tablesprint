@@ -4,6 +4,7 @@ import Input from "../shared/Input";
 import { LoginApi } from "../api/authApi";
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
+import logo from "../assets/logo/logo.svg";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -29,7 +30,6 @@ const Login: React.FC = () => {
       try {
         const res = await LoginApi(userData);
         if (res && res.success) {
-
           localStorage.setItem("authToken", res.data.accessToken);
           localStorage.setItem("isAuthenticated", "true");
 
@@ -57,12 +57,11 @@ const Login: React.FC = () => {
   }, []);
 
   return (
-    <div className="font-Poppins w-full min-h-screen bg-primary/30">
+    <div className="font-Poppins w-full min-h-screen bg-primary/30 bg-bg_image bg-right bg-contain">
       <Flex className="max-w-7xl mx-auto w-full h-screen justify-start">
         <Flex className="w-full max-w-xl flex-col bg-secondary rounded-xl text-center py-20 gap-12">
           <div className="flex flex-col">
-            <img src="" alt="" />
-            <h1 className="text-4xl mb-5">TableSprint</h1>
+            <img src={logo} alt="logo" />
             <p className="text-xl text-gray-400 mb-10">
               Welcome to TableSprint admin
             </p>

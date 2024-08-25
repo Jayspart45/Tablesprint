@@ -74,6 +74,7 @@ const Product: React.FC<ProductProps> = ({
       ),
       enableSorting: true,
     },
+
     {
       accessorKey: "image_url",
       header: "Image",
@@ -83,6 +84,27 @@ const Product: React.FC<ProductProps> = ({
           alt="Category"
           style={{ width: "50px", height: "auto" }}
         />
+      ),
+    },
+    {
+      accessorKey: "status",
+      header: ({ column }) => (
+        <button
+          className="flex items-center"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Status
+          <FaSort />
+        </button>
+      ),
+      cell: ({ row }) => (
+        <span
+          className={`${
+            row.original.status == "active" ? "text-green-500" : "text-red-500"
+          }`}
+        >
+          {row.original.status == "active"?"Active":"InActive"}
+        </span>
       ),
     },
     {
@@ -121,7 +143,7 @@ const Product: React.FC<ProductProps> = ({
         columns={columns}
         setView={setView}
       />
-       <ConfirmModal
+      <ConfirmModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onConfirm={handleConfirmDelete}

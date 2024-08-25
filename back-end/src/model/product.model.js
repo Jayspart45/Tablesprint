@@ -27,6 +27,11 @@ const Product = sequelize.define(
         key: "id",
       },
     },
+    status: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: "active",
+    },
     name: {
       type: DataTypes.STRING,
       allowNull: false,

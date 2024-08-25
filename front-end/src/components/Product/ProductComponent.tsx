@@ -10,6 +10,7 @@ export type Product = {
   image_url: string;
   categoryId: number;
   subcategoryId: number;
+  status?: string; 
   Category?: { id: number; name: string };
   SubCategory?: { id: number; name: string };
 };
@@ -19,8 +20,8 @@ interface ProductComponentProps {
   data?: Product;
   onSubmit: (formData: FormData) => void;
   setView: (view: "list" | "add" | "edit") => void;
-  categories: { id: number; name: string }[]; // Available categories
-  subcategories: { id: number; name: string }[]; // Available subcategories
+  categories: { id: number; name: string }[]; 
+  subcategories: { id: number; name: string }[]; 
 }
 
 const ProductComponent: React.FC<ProductComponentProps> = ({
@@ -39,11 +40,10 @@ const ProductComponent: React.FC<ProductComponentProps> = ({
   }>({
     productName: "",
     imageFile: null,
-    categoryId: categories.length > 0 ? categories[0].id : 0, // Default to first category
-    subcategoryId: subcategories.length > 0 ? subcategories[0].id : 0, // Default to first subcategory
+    categoryId: categories.length > 0 ? categories[0].id : 0, 
+    subcategoryId: subcategories.length > 0 ? subcategories[0].id : 0, 
   });
 
-  // Update form data when `data` prop changes
   useEffect(() => {
     if (data) {
       setFormData({
@@ -110,7 +110,6 @@ const ProductComponent: React.FC<ProductComponentProps> = ({
     }
   };
 
-  // Clean up object URLs created for image previews
   useEffect(() => {
     return () => {
       if (formData.imageFile) {

@@ -4,7 +4,6 @@ import { uploadOnImgbb } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { Op } from "sequelize";
 
-// Add a new category
 export const addCategory = asyncHandler(async (req, res) => {
   const { name, sequence } = req.body;
   if (!name || !sequence) {
@@ -29,7 +28,6 @@ export const addCategory = asyncHandler(async (req, res) => {
   res.status(201).json(new ApiResponse(200, category, "Category uploaded"));
 });
 
-// Get a category by ID
 export const getCategory = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
@@ -44,7 +42,6 @@ export const getCategory = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, category, "Category retrieved successfully"));
 });
 
-// List categories with pagination and search
 export const listCategories = asyncHandler(async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const pageSize = parseInt(req.query.pageSize) || 10;
@@ -77,7 +74,6 @@ export const listCategories = asyncHandler(async (req, res) => {
   });
 });
 
-// Edit an existing category
 export const editCategory = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const { name, sequence, status } = req.body;
@@ -91,10 +87,8 @@ export const editCategory = asyncHandler(async (req, res) => {
       .json(new ApiResponse(400, null, "Category ID is required."));
   }
 
-  // Debug logging
   console.log("Editing category with ID:", id);
 
-  // Fetch the existing category to get the current image URL if not updated
   const existingCategory = await Category.findByPk(id);
 
   if (!existingCategory) {
@@ -105,14 +99,11 @@ export const editCategory = asyncHandler(async (req, res) => {
   }
 
   if (imageFile) {
-    // Upload the new image and get the URL
     updatedImageUrl = await uploadOnImgbb(imageFile);
   } else {
-    // Retain the existing image URL if no new image is provided
     updatedImageUrl = existingCategory.image_url;
   }
 
-  // Update only the fields provided
   const updatedFields = {
     ...(name && { name }),
     ...(sequence && { sequence }),
@@ -120,17 +111,14 @@ export const editCategory = asyncHandler(async (req, res) => {
     ...(updatedImageUrl && { image_url: updatedImageUrl }), // Use updatedImageUrl if it's set
   };
 
-  // Debug logging
   console.log("Fields to update:", updatedFields);
 
-  // Perform the update
   const [updated] = await Category.update(updatedFields, {
     where: { id },
-    returning: true, // Get the updated rows back
+    returning: true, 
   });
 
   if (updated) {
-    // Fetch the updated category
     const updatedCategory = await Category.findByPk(id);
 
     res
@@ -144,7 +132,6 @@ export const editCategory = asyncHandler(async (req, res) => {
 });
 
 
-// Delete a category
 export const deleteCategory = asyncHandler(async (req, res) => {
   const { id } = req.params;
 

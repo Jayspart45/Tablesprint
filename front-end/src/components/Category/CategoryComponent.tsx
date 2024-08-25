@@ -7,6 +7,7 @@ export type Category = {
   name: string;
   sequence: string;
   image_url: string;
+  status: string;
 };
 
 interface CategoryComponentProps {

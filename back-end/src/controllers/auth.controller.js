@@ -11,9 +11,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
 import { sendEmail } from "../utils/nodemailer.js";
 
-/**
- * Handles user sign-in (registration).
- */
+
 export const signInUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
@@ -28,9 +26,7 @@ export const signInUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, user, "User created successfully."));
 });
 
-/**
- * Handles user login.
- */
+
 export const loginInUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
@@ -65,9 +61,7 @@ export const loginInUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, { user, accessToken }, "Login successful."));
 });
 
-/**
- * Handles password reset requests.
- */
+
 export const forgotPassword = asyncHandler(async (req, res) => {
   const { email } = req.body;
 
@@ -96,9 +90,7 @@ export const forgotPassword = asyncHandler(async (req, res) => {
   res.status(200).json(new ApiResponse(200, { email: user.email }, response));
 });
 
-/**
- * Handles password reset.
- */
+
 export const resetPassword = asyncHandler(async (req, res) => {
   const { email, token } = req.params;
   const { password } = req.body;
@@ -130,9 +122,7 @@ export const resetPassword = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, {}, "Password updated successfully."));
 });
 
-/**
- * Handles user logout.
- */
+
 export const logout = asyncHandler(async (req, res) => {
   res.clearCookie("accessToken", {
     httpOnly: true,
