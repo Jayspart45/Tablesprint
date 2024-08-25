@@ -10,11 +10,21 @@ import Category from "./pages/Category.js";
 import Subcategory from "./pages/Subcategory";
 import Product from "./pages/Product";
 import ProtectedRoute from "./shared/ProtectedRoute.js";
+import ForgotPassword from "./components/ForgotAndReset/Forgotpassword.js";
+import ResetPassword from "./components/ForgotAndReset/ResetPassword.js";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Login />,
+  },
+  {
+    path: "/forgot-password",
+    element: <ForgotPassword />,
+  },
+  {
+    path: "/reset-password/:email/:token",
+    element: <ResetPassword />,
   },
   {
     path: "admin",

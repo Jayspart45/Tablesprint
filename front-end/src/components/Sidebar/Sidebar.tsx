@@ -51,7 +51,7 @@ const Sidebar: React.FC = () => {
   };
 
   return (
-    <div className="bg-sidebar min-h-screen max-w-sm py-10">
+    <div className="bg-sidebar min-h-screen max-w-sm py-10 w-full">
       {sidebarLinks.map((link) => (
         <div
           key={link.title}

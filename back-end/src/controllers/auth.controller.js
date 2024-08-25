@@ -81,7 +81,7 @@ export const forgotPassword = asyncHandler(async (req, res) => {
   }
 
   const forgotToken = await generateForgotToken(user.id);
-  const resetPasswordLink = `${process.env.ORIGIN}/reset-password/${forgotToken}`;
+  const resetPasswordLink = `${process.env.ORIGIN}/reset-password/${email}/${forgotToken}`;
 
   const parameters = {
     email: user.email,

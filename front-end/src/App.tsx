@@ -35,7 +35,7 @@ function App() {
           <FaRegUserCircle size={24} />
         </button>
       </Flex>
-      <Flex className="w-full h-screen justify-between pt-20">
+      <Flex className="w-full h-screen justify-between pt-32">
         <Sidebar />
         <Outlet />
       </Flex>

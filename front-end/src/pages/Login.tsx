@@ -3,7 +3,7 @@ import Flex from "../shared/Flex";
 import Input from "../shared/Input";
 import { LoginApi } from "../api/authApi";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -29,7 +29,6 @@ const Login: React.FC = () => {
       try {
         const res = await LoginApi(userData);
         if (res && res.success) {
-          console.log(res.data);
 
           localStorage.setItem("authToken", res.data.accessToken);
           localStorage.setItem("isAuthenticated", "true");
@@ -82,9 +81,9 @@ const Login: React.FC = () => {
               type="password"
               placeholder="Password"
             />
-            <button className="text-primary font-semibold">
+            <Link to="/forgot-password" className="text-primary font-semibold">
               Forgot Password?
-            </button>
+            </Link>
           </div>
           <button
             onClick={handleSubmit}

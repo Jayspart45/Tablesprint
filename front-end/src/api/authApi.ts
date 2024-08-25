@@ -23,3 +23,14 @@ export const LogOutApi = async (): Promise<any> => {
         toast.error(errorMessage);
     }
 };
+
+export const ForgotPasswordApi = async (data: { email: string }): Promise<any> => {
+    try {
+        const response = await Baseaxios.post("/auth/forgot_password", data);
+        return response.data;
+    } catch (error: any) {
+        console.error("Forgot password error:", error);
+        const errorMessage = error?.response?.data?.message || "An unexpected error occurred.";
+        toast.error(errorMessage);
+    }
+};
