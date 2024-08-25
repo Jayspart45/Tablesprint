@@ -8,7 +8,7 @@ export type SubCategory = {
   id: number;
   name: string;
   sequence: string;
-  image: string;
+  image_url: string;
   categoryId: number;
   Category?: { id: number };
 };
@@ -111,7 +111,7 @@ const SubCategoryComponent: React.FC<SubcategoryComponentProps> = ({
 
   return (
     <Flex className="flex-col items-start justify-between gap-10 h-[80vh]">
-      <form className="grid sm:grid-cols-2 gap-10" onSubmit={handleSubmit}>
+      <form className="grid sm:grid-cols-2 gap-10">
         <h1 className="font-semibold text-xl col-span-2">{title}</h1>
 
         <Input
@@ -139,9 +139,9 @@ const SubCategoryComponent: React.FC<SubcategoryComponentProps> = ({
         </Select>
 
         <Input type="file" accept="image/*" onChange={handleImageChange} />
-        {formData.imageFile && (
+        {data?.image_url && (
           <img
-            src={URL.createObjectURL(formData.imageFile)}
+            src={data.image_url}
             alt="Preview"
             className="mt-2 w-32 h-32 object-cover"
           />
@@ -156,6 +156,7 @@ const SubCategoryComponent: React.FC<SubcategoryComponentProps> = ({
           Cancel
         </button>
         <button
+          onClick={handleSubmit}
           type="submit"
           className="bg-primary text-secondary rounded-xl px-4 py-2"
         >

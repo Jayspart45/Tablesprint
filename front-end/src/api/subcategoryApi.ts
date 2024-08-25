@@ -27,7 +27,7 @@ export const getSubCategoryData = async (
         
         return response.data.data;
     } catch (error: any) {
-        console.error("Error fetching category data:", error);
+        console.error("Error fetching subcategory data:", error);
         const errorMessage = error?.response?.data?.message || "An unexpected error occurred.";
         toast.error(errorMessage);
         throw error;
@@ -39,7 +39,7 @@ export const deleteSubCategory = async (id: number): Promise<void> => {
         await Baseaxios.delete(`/subcategories/delete_subcategory/${id}`);
         toast.success("SubCategory deleted successfully.");
     } catch (error: any) {
-        console.error("Error deleting category:", error);
+        console.error("Error deleting subcategory:", error);
         const errorMessage = error?.response?.data?.message || "An unexpected error occurred.";
         toast.error(errorMessage);
         throw error;
@@ -51,7 +51,7 @@ export const editSubCategory = async (id: number, data: FormData): Promise<void>
         await Baseaxios.put(`/subcategories/update_subcategory/${id}`, data);
         toast.success("SubCategory updated successfully.");
     } catch (error: any) {
-        console.error("Error updating category:", error);
+        console.error("Error updating subcategory:", error);
         const errorMessage = error?.response?.data?.message || "An unexpected error occurred.";
         toast.error(errorMessage);
         throw error;
@@ -62,7 +62,7 @@ export const addSubCategory = async ( data: any): Promise<void> => {
         await Baseaxios.post(`/subcategories/add_subcategory`, data);
         toast.success("SubCategory added successfully.");
     } catch (error: any) {
-        console.error("Error updating category:", error);
+        console.error("Error updating subcategory:", error);
         const errorMessage = error?.response?.data?.message || "An unexpected error occurred.";
         toast.error(errorMessage);
         throw error;

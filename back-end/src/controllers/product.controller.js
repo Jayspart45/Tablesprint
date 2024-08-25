@@ -37,22 +37,18 @@ export const getProducts = asyncHandler(async (req, res) => {
         attributes: ["id", "name"], // Specify which attributes to include from Subcategory
       },
     ],
-    attributes: ['id', 'name', 'status', 'sequence', 'image_url']
-
+    attributes: ["id", "name", "status", "image_url"],
   });
 
-  res.status(200).json(
-    new ApiResponse(
-      200,
-      {
-        total: count,
-        page,
-        pageSize,
-        data: rows,
-      },
-      "Products retrieved successfully."
-    )
-  );
+  res.status(200).json({
+    success: true,
+    data: rows,
+    pagination: {
+      total: count,
+      page,
+      pageSize,
+    },
+  });
 });
 
 // Add a new product
@@ -109,10 +105,9 @@ export const addProduct = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, newProduct, "Product added successfully."));
 });
 
-  
 export const updateProduct = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { category_id, subcategory_id, name,status } = req.body;
+  const { category_id, subcategory_id, name, status } = req.body;
   const imageFile = req.file ? req.file.path : null;
 
   let imageUrl = null;

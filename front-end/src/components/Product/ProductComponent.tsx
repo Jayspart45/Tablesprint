@@ -1,179 +1,184 @@
-// import React, { useEffect, useState } from "react";
-// import Flex from "../../shared/Flex";
-// import Input from "../../shared/Input";
-// import Select from "../../shared/Select";
-// import { toast } from "react-toastify";
-// import { getCategoryData } from "../../api/categoryApi";
-// import { getSubCategoryData } from "../../api/subcategoryApi"; // Import the function to get subcategories
+import React, { useEffect, useState } from "react";
+import Flex from "../../shared/Flex";
+import Input from "../../shared/Input";
+import Select from "../../shared/Select";
+import { toast } from "react-toastify";
 
-// export type Product = {
-//   id?: number;
-//   name: string;
-//   description: string;
-//   price: number;
-//   categoryId: number;
-//   subCategoryId: number;
-// };
+export type Product = {
+  id: number;
+  name: string;
+  image_url: string;
+  categoryId: number;
+  subcategoryId: number;
+  Category?: { id: number; name: string };
+  SubCategory?: { id: number; name: string };
+};
 
-// interface ProductComponentProps {
-//   title: string;
-//   data?: Product;
-//   onSubmit: (formData: FormData) => void;
-//   setView: (view: "list" | "add" | "edit") => void;
-// }
+interface ProductComponentProps {
+  title: string;
+  data?: Product;
+  onSubmit: (formData: FormData) => void;
+  setView: (view: "list" | "add" | "edit") => void;
+  categories: { id: number; name: string }[]; // Available categories
+  subcategories: { id: number; name: string }[]; // Available subcategories
+}
 
-// const ProductComponent: React.FC<ProductComponentProps> = ({
-//   title,
-//   data,
-//   onSubmit,
-//   setView,
-// }) => {
-//   const [formData, setFormData] = useState<{
-//     name: string;
-//     description: string;
-//     price: number;
-//     categoryId: number;
-//     subCategoryId: number;
-//   }>({
-//     name: "",
-//     description: "",
-//     price: 0,
-//     categoryId: 0,
-//     subCategoryId: 0,
-//   });
-//   const [categories, setCategories] = useState<{ id: number; name: string }[]>([]);
-//   const [subCategories, setSubCategories] = useState<{ id: number; name: string }[]>([]);
+const ProductComponent: React.FC<ProductComponentProps> = ({
+  title,
+  data,
+  onSubmit,
+  setView,
+  categories,
+  subcategories,
+}) => {
+  const [formData, setFormData] = useState<{
+    productName: string;
+    imageFile: File | null;
+    categoryId: number;
+    subcategoryId: number;
+  }>({
+    productName: "",
+    imageFile: null,
+    categoryId: categories.length > 0 ? categories[0].id : 0, // Default to first category
+    subcategoryId: subcategories.length > 0 ? subcategories[0].id : 0, // Default to first subcategory
+  });
 
-//   useEffect(() => {
-//     const fetchCategories = async () => {
-//       const res = await getCategoryData();
-//       setCategories(res);
-//       if (data) {
-//         setFormData((prevData) => ({
-//           ...prevData,
-//           categoryId: data.categoryId,
-//           subCategoryId: data.subCategoryId,
-//         }));
-//         fetchSubCategories(data.categoryId);
-//       }
-//     };
+  // Update form data when `data` prop changes
+  useEffect(() => {
+    if (data) {
+      setFormData({
+        productName: data.name,
+        imageFile: null,
+        categoryId: data.Category?.id || categories[0].id,
+        subcategoryId: data.SubCategory?.id || subcategories[0].id,
+      });
+    }
+  }, [data]);
 
-//     fetchCategories();
-//   }, [data]);
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
 
-//   const fetchSubCategories = async (categoryId: number) => {
-//     const res = await getSubCategoryData(1, 10, "", "id", "ASC", categoryId);
-//     setSubCategories(res);
-//   };
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files[0]) {
+      setFormData((prevData) => ({
+        ...prevData,
+        imageFile: files[0],
+      }));
+    }
+  };
 
-//   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-//     const { name, value } = e.target;
-//     setFormData((prevData) => ({
-//       ...prevData,
-//       [name]: name === "price" ? parseFloat(value) : value,
-//     }));
-//   };
+  const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      categoryId: parseInt(e.target.value),
+    }));
+  };
 
-//   const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-//     const categoryId = parseInt(e.target.value);
-//     setFormData((prevData) => ({
-//       ...prevData,
-//       categoryId,
-//     }));
-//     fetchSubCategories(categoryId);
-//   };
+  const handleSubcategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      subcategoryId: parseInt(e.target.value),
+    }));
+  };
 
-//   const handleSubCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-//     setFormData((prevData) => ({
-//       ...prevData,
-//       subCategoryId: parseInt(e.target.value),
-//     }));
-//   };
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-//   const handleSubmit = async (e: React.FormEvent) => {
-//     e.preventDefault();
+    const submissionData = new FormData();
+    submissionData.append("name", formData.productName);
+    submissionData.append("category_id", formData.categoryId.toString());
+    submissionData.append("subcategory_id", formData.subcategoryId.toString());
+    if (formData.imageFile) {
+      submissionData.append("image_url", formData.imageFile);
+    }
+    if (data?.id) {
+      submissionData.append("id", data.id.toString());
+    }
 
-//     const submissionData = new FormData();
-//     submissionData.append("name", formData.name);
-//     submissionData.append("description", formData.description);
-//     submissionData.append("price", formData.price.toString());
-//     submissionData.append("category_id", formData.categoryId.toString());
-//     submissionData.append("sub_category_id", formData.subCategoryId.toString());
+    try {
+      onSubmit(submissionData);
+      toast.success("Product submitted successfully.");
+    } catch (error) {
+      console.error("Failed to submit:", error);
+      toast.error("Failed to submit. Please try again.");
+    }
+  };
 
-//     try {
-//       await onSubmit(submissionData);
-//       toast.success("Product submitted successfully.");
-//     } catch (error) {
-//       console.error("Failed to submit:", error);
-//       toast.error("Failed to submit. Please try again.");
-//     }
-//   };
+  // Clean up object URLs created for image previews
+  useEffect(() => {
+    return () => {
+      if (formData.imageFile) {
+        URL.revokeObjectURL(URL.createObjectURL(formData.imageFile));
+      }
+    };
+  }, [formData.imageFile]);
 
-//   return (
-//     <Flex className="flex-col items-start justify-between gap-10 h-[80vh]">
-//       <form className="grid sm:grid-cols-2 gap-10" onSubmit={handleSubmit}>
-//         <h1 className="font-semibold text-xl col-span-2">{title}</h1>
+  return (
+    <Flex className="flex-col items-start justify-between gap-10 h-[80vh]">
+      <form className="grid sm:grid-cols-2 gap-10">
+        <h1 className="font-semibold text-xl col-span-2">{title}</h1>
 
-//         <Input
-//           name="name"
-//           value={formData.name}
-//           onChange={handleInputChange}
-//           placeholder="Product Name"
-//         />
-//         <Input
-//           name="description"
-//           value={formData.description}
-//           onChange={handleInputChange}
-//           placeholder="Description"
-//         />
-//         <Input
-//           name="price"
-//           type="number"
-//           value={formData.price}
-//           onChange={handleInputChange}
-//           placeholder="Price"
-//         />
+        <Input
+          name="productName"
+          value={formData.productName}
+          onChange={handleInputChange}
+          placeholder="Product Name"
+        />
 
-//         <Select
-//           value={formData.categoryId.toString()}
-//           onChange={handleCategoryChange}
-//         >
-//           {categories.map((category) => (
-//             <option key={category.id} value={category.id}>
-//               {category.name}
-//             </option>
-//           ))}
-//         </Select>
+        <Select
+          value={formData.categoryId.toString()}
+          onChange={handleCategoryChange}
+        >
+          {categories.map((category) => (
+            <option key={category.id} value={category.id}>
+              {category.name}
+            </option>
+          ))}
+        </Select>
+        <Select
+          value={formData.subcategoryId.toString()}
+          onChange={handleSubcategoryChange}
+        >
+          {subcategories.map((subcategory) => (
+            <option key={subcategory.id} value={subcategory.id}>
+              {subcategory.name}
+            </option>
+          ))}
+        </Select>
 
-//         <Select
-//           value={formData.subCategoryId.toString()}
-//           onChange={handleSubCategoryChange}
-//         >
-//           {subCategories.map((subCategory) => (
-//             <option key={subCategory.id} value={subCategory.id}>
-//               {subCategory.name}
-//             </option>
-//           ))}
-//         </Select>
+        <Input type="file" accept="image/*" onChange={handleImageChange} />
+        {data?.image_url && (
+          <img
+            src={data.image_url}
+            alt="Preview"
+            className="mt-2 w-32 h-32 object-cover"
+          />
+        )}
+      </form>
+      <Flex className="w-full justify-end">
+        <button
+          type="button"
+          onClick={() => setView("list")}
+          className="bg-gray-500 text-white rounded-xl px-4 py-2 mr-4"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={handleSubmit}
+          type="submit"
+          className="bg-primary text-secondary rounded-xl px-4 py-2"
+        >
+          Save
+        </button>
+      </Flex>
+    </Flex>
+  );
+};
 
-//         <Flex className="w-full justify-end">
-//           <button
-//             type="button"
-//             onClick={() => setView("list")}
-//             className="bg-gray-500 text-white rounded-xl px-4 py-2 mr-4"
-//           >
-//             Cancel
-//           </button>
-//           <button
-//             type="submit"
-//             className="bg-primary text-secondary rounded-xl px-4 py-2"
-//           >
-//             Save
-//           </button>
-//         </Flex>
-//       </form>
-//     </Flex>
-//   );
-// };
-
-// export default ProductComponent;
+export default ProductComponent;
