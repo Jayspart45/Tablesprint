@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { DataTable } from "../../shared/DataTable";
 import { ColumnDef } from "@tanstack/react-table";
 import { FaEdit, FaSort } from "react-icons/fa";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import type { Product } from "./ProductComponent";
+import ConfirmModal from "../../shared/ConfirmModal";
 
 interface ProductProps {
   data: Product[];
@@ -18,6 +19,8 @@ const Product: React.FC<ProductProps> = ({
   handleEdit,
   handleDelete,
 }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<Product | null>(null);
   const columns: ColumnDef<Product>[] = [
     {
       accessorKey: "id",
@@ -90,7 +93,12 @@ const Product: React.FC<ProductProps> = ({
           <button onClick={() => handleEdit(row.original)}>
             <FaEdit size={24} />
           </button>
-          <button onClick={() => handleDelete(row.original)}>
+          <button
+            onClick={() => {
+              setItemToDelete(row.original);
+              setIsModalOpen(true);
+            }}
+          >
             <MdOutlineDeleteOutline size={24} />
           </button>
         </div>
@@ -98,7 +106,13 @@ const Product: React.FC<ProductProps> = ({
       enableSorting: false,
     },
   ];
-
+  const handleConfirmDelete = async () => {
+    if (itemToDelete) {
+      handleDelete(itemToDelete);
+      setIsModalOpen(false);
+      setItemToDelete(null);
+    }
+  };
   return (
     <div>
       <DataTable
@@ -106,6 +120,12 @@ const Product: React.FC<ProductProps> = ({
         data={data}
         columns={columns}
         setView={setView}
+      />
+       <ConfirmModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onConfirm={handleConfirmDelete}
+        itemName={itemToDelete ? itemToDelete.name : ""}
       />
     </div>
   );

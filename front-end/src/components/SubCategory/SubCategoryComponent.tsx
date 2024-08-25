@@ -40,7 +40,6 @@ const SubCategoryComponent: React.FC<SubcategoryComponentProps> = ({
     categoryId: categories.length > 0 ? categories[0].id : 0, // Default to first category
   });
 
-  // Update form data when `data` prop changes
   useEffect(() => {
     if (data) {
       setFormData({
@@ -92,7 +91,7 @@ const SubCategoryComponent: React.FC<SubcategoryComponentProps> = ({
     }
 
     try {
-      await onSubmit(submissionData);
+       onSubmit(submissionData);
       toast.success("Subcategory submitted successfully.");
     } catch (error) {
       console.error("Failed to submit:", error);

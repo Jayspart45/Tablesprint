@@ -9,6 +9,7 @@ import Dashboard from "./pages/Dashboard.js";
 import Category from "./pages/Category.js";
 import Subcategory from "./pages/Subcategory";
 import Product from "./pages/Product";
+import ProtectedRoute from "./shared/ProtectedRoute.js";
 
 const router = createBrowserRouter([
   {
@@ -17,7 +18,12 @@ const router = createBrowserRouter([
   },
   {
     path: "admin",
-    element: <App />,
+    element: (
+      <ProtectedRoute>
+        <App />
+      </ProtectedRoute>
+    ),
+
     children: [
       { path: "dashboard", element: <Dashboard /> },
       { path: "category", element: <Category /> },

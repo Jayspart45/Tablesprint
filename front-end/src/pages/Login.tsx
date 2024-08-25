@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Flex from "../shared/Flex";
 import Input from "../shared/Input";
 import { LoginApi } from "../api/authApi";
@@ -18,29 +18,54 @@ const Login: React.FC = () => {
   ) => {
     setUserData((prev) => ({
       ...prev,
-      [name]: e.target.value,
+      [name]: e.target.value.trim(),
     }));
   };
+
   const handleSubmit = async () => {
-    if (userData.email.length > 0 && userData.password.length > 0) {
-      const res = await LoginApi(userData);
-      if (res) {
-        toast.success(res.message);
-        navigate("/admin/dasboard");
+    const { email, password } = userData;
+
+    if (email.length > 0 && password.length > 0) {
+      try {
+        const res = await LoginApi(userData);
+        if (res && res.success) {
+          console.log(res.data);
+
+          localStorage.setItem("authToken", res.data.accessToken);
+          localStorage.setItem("isAuthenticated", "true");
+
+          toast.success(res.message);
+          navigate("/admin/dashboard");
+        } else {
+          toast.error(res.message || "Login failed. Please try again.");
+        }
+      } catch (error) {
+        toast.error("An error occurred during login. Please try again.");
+        console.error("Login error:", error);
       }
     } else {
       toast.warning("Please fill in both fields.");
     }
   };
+  const getFromLocal = (key: string): string | null => {
+    return localStorage.getItem(key);
+  };
+  useEffect(() => {
+    const isAuthenticated = getFromLocal("isAuthenticated");
+    if (isAuthenticated) {
+      navigate("/admin/dashboard");
+    }
+  }, []);
+
   return (
     <div className="font-Poppins w-full min-h-screen bg-primary/30">
-      <Flex className="max-w-7xl mx-auto w-full h-screen  justify-start">
+      <Flex className="max-w-7xl mx-auto w-full h-screen justify-start">
         <Flex className="w-full max-w-xl flex-col bg-secondary rounded-xl text-center py-20 gap-12">
           <div className="flex flex-col">
             <img src="" alt="" />
             <h1 className="text-4xl mb-5">TableSprint</h1>
             <p className="text-xl text-gray-400 mb-10">
-              Welcome to tableSprint admin
+              Welcome to TableSprint admin
             </p>
           </div>
           <div className="flex flex-col items-end">
@@ -48,14 +73,14 @@ const Login: React.FC = () => {
               value={userData.email}
               onChange={(e) => handleInput(e, "email")}
               className="mb-5"
-              placeholder="email"
+              placeholder="Email"
             />
             <Input
               value={userData.password}
               onChange={(e) => handleInput(e, "password")}
               className="mb-2"
               type="password"
-              placeholder="password"
+              placeholder="Password"
             />
             <button className="text-primary font-semibold">
               Forgot Password?

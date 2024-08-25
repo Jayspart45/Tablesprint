@@ -9,6 +9,7 @@ import type { SubCategory } from "../components/SubCategory/SubCategoryComponent
 import SubCategoryComponent from "../components/SubCategory/SubCategoryComponent";
 import { toast } from "react-toastify";
 import Hero from "../components/SubCategory/Hero";
+import { getCategoryData } from "../api/categoryApi";
 
 const SubCategory: React.FC = () => {
   const [data, setData] = useState<SubCategory[]>([]);
@@ -28,7 +29,7 @@ const SubCategory: React.FC = () => {
         setData(res);
         console.log(res);
 
-        const categoriesData = await getSubCategoryData(); // Fetch categories
+        const categoriesData = await getCategoryData();
         setCategories(categoriesData);
       } catch (error) {
         console.error("Failed to fetch subcategory data:", error);
