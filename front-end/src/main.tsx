@@ -1,18 +1,22 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import App from "./App.js";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Login from "./pages/Login.js";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Dashboard from "./pages/Dashboard.js";
-import Category from "./pages/Category.js";
+
+// Import pages and components
+import App from "./App";
+import Login from "./pages/Login";
+import Dashboard from "./pages/Dashboard";
+import Category from "./pages/Category";
 import Subcategory from "./pages/Subcategory";
 import Product from "./pages/Product";
-import ProtectedRoute from "./shared/ProtectedRoute.js";
-import ForgotPassword from "./components/ForgotAndReset/Forgotpassword.js";
-import ResetPassword from "./components/ForgotAndReset/ResetPassword.js";
+import ProtectedRoute from "./shared/ProtectedRoute";
+import ForgotPassword from "./components/ForgotAndReset/Forgotpassword";
+import ResetPassword from "./components/ForgotAndReset/ResetPassword";
+import PageNotFound from "./pages/PageNotFound";
 
+// Configure router
 const router = createBrowserRouter([
   {
     path: "/",
@@ -33,7 +37,6 @@ const router = createBrowserRouter([
         <App />
       </ProtectedRoute>
     ),
-
     children: [
       { path: "dashboard", element: <Dashboard /> },
       { path: "category", element: <Category /> },
@@ -41,8 +44,13 @@ const router = createBrowserRouter([
       { path: "products", element: <Product /> },
     ],
   },
+  {
+    path: "*",
+    element: <PageNotFound />,
+  },
 ]);
 
+// Render the application
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <RouterProvider router={router} />
