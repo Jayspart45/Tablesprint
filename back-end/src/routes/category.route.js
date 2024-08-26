@@ -4,21 +4,27 @@ import {
   addCategory,
   deleteCategory,
   editCategory,
-  listCategories,
+  getCategories,
 } from "../controllers/category.controller.js";
+
+import verifyJWT from "../middleware/auth.middleware.js";
 
 import { upload } from "../middleware/multer.middleware.js";
 
 const router = Router();
 
-router.route("/get_category/:id").get(getCategory);
+router.route("/get_category/:id").get(verifyJWT, getCategory);
 
-router.route("/add_category").post(upload.single("image_url"), addCategory);
+router
+  .route("/add_category")
+  .post(verifyJWT, upload.single("image_url"), addCategory);
 
-router.route("/delete_category/:id").delete(deleteCategory);
+router.route("/delete_category/:id").delete(verifyJWT, deleteCategory);
 
-router.route("/update_category/:id").put(upload.single("image_url"), editCategory);
+router
+  .route("/update_category/:id")
+  .put(verifyJWT, upload.single("image_url"), editCategory);
 
-router.route("/list_categories").get(listCategories);
+router.route("/list_categories").get(verifyJWT, getCategories);
 
 export default router;

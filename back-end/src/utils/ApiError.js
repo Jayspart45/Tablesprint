@@ -1,3 +1,4 @@
+// Custom Error
 class ApiError extends Error {
   constructor(
     statusCode,

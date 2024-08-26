@@ -8,6 +8,7 @@ const unlinkFile = util.promisify(fs.unlink);
 
 const API_KEY = process.env.IMGBB_API_KEY; 
 
+// Upload image on Imgbb
 const uploadOnImgbb = async (localFilePath) => {
   console.log("Uploading to Imgbb:", localFilePath);
   try {

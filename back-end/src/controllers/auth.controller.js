@@ -11,8 +11,8 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
 import { sendEmail } from "../utils/nodemailer.js";
 
-
-export const signInUser = asyncHandler(async (req, res) => {
+// Register a new user
+export const registerUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
@@ -26,8 +26,8 @@ export const signInUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, user, "User created successfully."));
 });
 
-
-export const loginInUser = asyncHandler(async (req, res) => {
+// Log in an existing user
+export const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
@@ -36,16 +36,12 @@ export const loginInUser = asyncHandler(async (req, res) => {
 
   const user = await User.findOne({ where: { email } });
   if (!user) {
-    return res
-      .status(400)
-      .json(new ApiError(400, "Invalid email or password."));
+    throw new ApiError(400, "Invalid credentials.");
   }
 
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) {
-    return res
-      .status(400)
-      .json(new ApiError(400, "Invalid email or password."));
+    throw new ApiError(400, "Invalid credentials.");
   }
 
   const accessToken = await generateAccessToken(user.id);
@@ -53,6 +49,7 @@ export const loginInUser = asyncHandler(async (req, res) => {
   const options = {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
+    expires: new Date(Date.now() + 3600000),
   };
 
   res.cookie("accessToken", accessToken, options);
@@ -61,7 +58,7 @@ export const loginInUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, { user, accessToken }, "Login successful."));
 });
 
-
+// Handle forgotten password
 export const forgotPassword = asyncHandler(async (req, res) => {
   const { email } = req.body;
 
@@ -69,12 +66,13 @@ export const forgotPassword = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Email is required.");
   }
 
-  const user = await User.findOne({ where: { email } });
+  const user = await User.findOne({ where: { email: email.toLowerCase() } });
   if (!user) {
-    return res.status(400).json(new ApiError(400, "User does not exist."));
+    throw new ApiError(400, "User does not exist.");
   }
 
   const forgotToken = await generateForgotToken(user.id);
+
   const resetPasswordLink = `${process.env.ORIGIN}/reset-password/${email}/${forgotToken}`;
 
   const parameters = {
@@ -90,20 +88,26 @@ export const forgotPassword = asyncHandler(async (req, res) => {
   res.status(200).json(new ApiResponse(200, { email: user.email }, response));
 });
 
-
+// Reset user password
 export const resetPassword = asyncHandler(async (req, res) => {
   const { email, token } = req.params;
+  console.log(email, token);
+
   const { password } = req.body;
 
   if (!email || !token || !password) {
     throw new ApiError(400, "Email, token, and new password are required.");
   }
 
-  const decoded = jwt.verify(token.trim(), "sdbckjvsdvkjsdvjkbddvjbejb78323");
+  try {
+    jwt.verify(token.trim(), process.env.FORGET_TOKEN_SECRET);
+  } catch (err) {
+    throw new ApiError(400, "Invalid or expired token.");
+  }
 
   const user = await User.findOne({ where: { email } });
   if (!user) {
-    return res.status(400).json(new ApiError(400, "User does not exist."));
+    throw new ApiError(400, "User does not exist.");
   }
 
   const hashedPassword = await bcrypt.hash(password.toString(), 10);
@@ -113,15 +117,15 @@ export const resetPassword = asyncHandler(async (req, res) => {
   );
 
   if (!updated) {
-    return res.status(400).json(new ApiError(400, "Password update failed."));
+    throw new ApiError(400, "Password update failed.");
   }
 
   res
     .status(200)
-    .json(new ApiResponse(200, {}, "Password updated successfully."));
+    .json(new ApiResponse(200, null, "Password updated successfully."));
 });
 
-
+// Log out the user
 export const logout = asyncHandler(async (req, res) => {
   res.clearCookie("accessToken", {
     httpOnly: true,

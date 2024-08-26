@@ -6,6 +6,7 @@ import Flex from "./shared/Flex";
 import LogOutModal from "./shared/LogoutModal";
 import { LogOutApi } from "./api/authApi";
 import { FaRegUserCircle } from "react-icons/fa";
+import { toast } from "react-toastify";
 
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -15,7 +16,9 @@ function App() {
     try {
       const res = await LogOutApi();
       if (res.success) {
+        toast.success(res.message)
         localStorage.removeItem("isAuthenticated"); 
+        localStorage.removeItem("authToken"); 
         navigate("/");
       }
     } catch (error) {

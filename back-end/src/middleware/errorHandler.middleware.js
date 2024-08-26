@@ -2,53 +2,38 @@ import { statusCode as code } from "../constant.js";
 
 const errorHandler = (err, req, res, next) => {
   const statusCode = err.statusCode || 500;
+  const isProduction = process.env.NODE_ENV === 'production';
+
   res.status(statusCode);
-  console.log(err);
+
+  const errorResponse = {
+    title: statusCode === code.SERVER_ERROR ? "Server Error" : "Error",
+    message: err.message,
+  };
+
+  if (!isProduction) {
+    errorResponse.stackTrace = err.stack;
+  }
 
   switch (statusCode) {
     case code.VALIDATION_ERROR:
-      res.json({
-        title: "Validation Failed",
-        message: err.message,
-        stackTrace: err.stack,
-      });
+      errorResponse.title = "Validation Failed";
       break;
     case code.NOT_FOUND:
-      res.json({
-        title: "Not Found",
-        message: err.message,
-        stackTrace: err.stack,
-      });
+      errorResponse.title = "Not Found";
       break;
     case code.FORBIDDEN:
-      res.json({
-        title: "Forbidden",
-        message: err.message,
-        stackTrace: err.stack,
-      });
-      break;
-    case code.SERVER_ERROR:
-      res.json({
-        title: "Server Error",
-        message: err.message,
-        stackTrace: err.stack,
-      });
+      errorResponse.title = "Forbidden";
       break;
     case code.UNAUTHORIZED:
-      res.json({
-        title: "Unauthorized",
-        message: err.message,
-        stackTrace: err.stack,
-      });
+      errorResponse.title = "Unauthorized";
       break;
+    case code.SERVER_ERROR:
     default:
-      res.json({
-        title: "Error",
-        message: err.message,
-        stackTrace: err.stack,
-      });
       break;
   }
+
+  res.json(errorResponse);
 };
 
 export default errorHandler;

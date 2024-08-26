@@ -27,20 +27,15 @@ const Login: React.FC = () => {
     const { email, password } = userData;
 
     if (email.length > 0 && password.length > 0) {
-      try {
-        const res = await LoginApi(userData);
-        if (res && res.success) {
-          localStorage.setItem("authToken", res.data.accessToken);
-          localStorage.setItem("isAuthenticated", "true");
+      const res = await LoginApi(userData);
+      if (res && res.success) {
+        localStorage.setItem("authToken", res.data.accessToken);
+        localStorage.setItem("isAuthenticated", "true");
 
-          toast.success(res.message);
-          navigate("/admin/dashboard");
-        } else {
-          toast.error(res.message || "Login failed. Please try again.");
-        }
-      } catch (error) {
-        toast.error("An error occurred during login. Please try again.");
-        console.error("Login error:", error);
+        toast.success(res.message);
+        navigate("/admin/dashboard");
+      } else {
+        toast.error(res.message || "Login failed. Please try again.");
       }
     } else {
       toast.warning("Please fill in both fields.");
