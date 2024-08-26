@@ -19,7 +19,6 @@ import {
 } from "../shadcn/ui/table";
 import React, { ReactNode } from "react";
 import Input from "./Input";
-import { BiCategory } from "react-icons/bi";
 
 interface DataTableProps<TData, TValue> {
   img: ReactNode;

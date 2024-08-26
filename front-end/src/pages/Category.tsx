@@ -3,7 +3,7 @@ import {
   getCategoryData,
   deleteCategory,
   addCategory,
-  editCategory, // Ensure this function is imported
+  editCategory, 
 } from "../api/categoryApi";
 import Hero from "../components/Category/Hero";
 import type { Category } from "../components/Category/CategoryComponent";

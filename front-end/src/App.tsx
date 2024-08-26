@@ -1,12 +1,11 @@
 import { useState } from "react";
-import "./App.css";
-import { Outlet, useNavigate } from "react-router-dom";
-import Sidebar from "./components/Sidebar/Sidebar";
-import Flex from "./shared/Flex";
-import LogOutModal from "./shared/LogoutModal";
-import { LogOutApi } from "./api/authApi";
-import { FaRegUserCircle } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import Header from "./components/Header";
+import Layout from "./components/Layout";
+import { LogOutApi } from "./api/authApi";
+import "./App.css";
+import LogOutModal from "./shared/LogoutModal";
 
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -16,13 +15,16 @@ function App() {
     try {
       const res = await LogOutApi();
       if (res.success) {
-        toast.success(res.message)
-        localStorage.removeItem("isAuthenticated"); 
-        localStorage.removeItem("authToken"); 
+        toast.success(res.message);
+        localStorage.removeItem("isAuthenticated");
+        localStorage.removeItem("authToken");
         navigate("/");
+      } else {
+        toast.error("Logout failed. Please try again.");
       }
     } catch (error) {
       console.error("Logout error:", error);
+      toast.error("An error occurred while logging out. Please try again.");
     } finally {
       setIsModalOpen(false);
     }
@@ -30,18 +32,8 @@ function App() {
 
   return (
     <div className="font-Poppins">
-      <Flex className="fixed top-0 left-0 right-0 flex justify-end items-center px-5 py-4 z-30 bg-primary text-secondary">
-        <button
-          onClick={() => setIsModalOpen(true)}
-          className="text-white rounded px-4 py-2"
-        >
-          <FaRegUserCircle size={24} />
-        </button>
-      </Flex>
-      <Flex className="w-full h-screen justify-between pt-32">
-        <Sidebar />
-        <Outlet />
-      </Flex>
+      <Header onOpenModal={() => setIsModalOpen(true)} />
+      <Layout />
       <LogOutModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

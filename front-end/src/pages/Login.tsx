@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import Flex from "../shared/Flex";
 import Input from "../shared/Input";
 import { LoginApi } from "../api/authApi";
 import { toast } from "react-toastify";
-import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/logo/logo.svg";
 
 const Login: React.FC = () => {
@@ -52,7 +52,7 @@ const Login: React.FC = () => {
   }, []);
 
   return (
-    <div className="font-Poppins w-full min-h-screen bg-primary/30 bg-bg_image bg-right bg-contain">
+    <div className="font-Poppins w-full min-h-screen bg-primary/30 bg-bg_image bg-right bg-contain bg-no-repeat">
       <Flex className="max-w-7xl mx-auto w-full h-screen justify-start">
         <Flex className="w-full max-w-xl flex-col bg-secondary rounded-xl text-center py-20 gap-12">
           <div className="flex flex-col">
