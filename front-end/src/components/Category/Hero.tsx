@@ -5,6 +5,7 @@ import { MdOutlineDeleteOutline } from "react-icons/md";
 import { Category } from "./CategoryComponent";
 import ConfirmModal from "../../shared/ConfirmModal";
 import { useState } from "react";
+import { BiCategory } from "react-icons/bi";
 
 interface HeroProps {
   data: Category[];
@@ -99,7 +100,7 @@ const Hero: React.FC<HeroProps> = ({
       cell: ({ row }) => (
         <div className="flex">
           <button onClick={() => handleEdit(row.original)}>
-            <FaEdit size={24} />
+            <FaEdit className="text-gray-500" size={22} />
           </button>
           <button
             onClick={() => {
@@ -107,7 +108,7 @@ const Hero: React.FC<HeroProps> = ({
               setIsModalOpen(true);
             }}
           >
-            <MdOutlineDeleteOutline size={24} />
+            <MdOutlineDeleteOutline className="text-gray-500" size={24} />
           </button>
         </div>
       ),
@@ -124,6 +125,7 @@ const Hero: React.FC<HeroProps> = ({
   return (
     <div>
       <DataTable
+      img={<BiCategory size={24} />}
         title={"Category"}
         data={data}
         columns={columns}

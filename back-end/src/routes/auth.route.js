@@ -19,6 +19,6 @@ router.route("/forgot_password").post(forgotPassword);
 
 router.route("/reset_password/:email/:token").post(resetPassword);
 
-router.route("/logout").post(verifyJWT,logout);
+router.route("/logout").post(logout);
 
 export default router;

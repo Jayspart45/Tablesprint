@@ -11,6 +11,7 @@ import { toast } from "react-toastify";
 import Hero from "../components/Product/Hero";
 import { getCategoryData } from "../api/categoryApi";
 import { getSubCategoryData } from "../api/subcategoryApi";
+import Loading from "../shared/Loading";
 
 const Product: React.FC = () => {
   const [data, setData] = useState<Product[]>([]);
@@ -21,7 +22,7 @@ const Product: React.FC = () => {
     []
   );
   const [subcategories, setSubcategories] = useState<
-    { id: number; name: string }[]
+    { id: number; name: string; Category: { id: number; name: string } }[]
   >([]);
 
   useEffect(() => {
@@ -31,10 +32,10 @@ const Product: React.FC = () => {
         const products = await getProductData();
         setData(products);
 
-        const categoriesData = await getCategoryData(); // Fetch categories
+        const categoriesData = await getCategoryData();
         setCategories(categoriesData);
 
-        const subcategoriesData = await getSubCategoryData(); // Fetch subcategories
+        const subcategoriesData = await getSubCategoryData();
         setSubcategories(subcategoriesData);
       } catch (error) {
         console.error("Failed to fetch product data:", error);
@@ -89,7 +90,7 @@ const Product: React.FC = () => {
 
   return (
     <div className="w-full p-10 h-screen overflow-y-auto">
-      {loading && <p>Loading...</p>}
+      {loading && <Loading />}
 
       {view === "list" && (
         <>

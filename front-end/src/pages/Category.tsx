@@ -9,6 +9,7 @@ import Hero from "../components/Category/Hero";
 import type { Category } from "../components/Category/CategoryComponent";
 import CategoryComponent from "../components/Category/CategoryComponent";
 import { toast } from "react-toastify";
+import Loading from "../shared/Loading";
 
 const Category: React.FC = () => {
   const [data, setData] = useState<Category[]>([]);
@@ -23,7 +24,6 @@ const Category: React.FC = () => {
       setLoading(true);
       try {
         const res = await getCategoryData();
-
         setData(res);
       } catch (error) {
         console.error("Failed to fetch category data:", error);
@@ -64,7 +64,7 @@ const Category: React.FC = () => {
   const handleEditSubmit = async (formData: FormData) => {
     if (editCategoryData) {
       try {
-        await editCategory(editCategoryData.id, formData); 
+        await editCategory(editCategoryData.id, formData);
         const updatedData = await getCategoryData();
         setData(updatedData);
         setView("list");
@@ -78,7 +78,7 @@ const Category: React.FC = () => {
 
   return (
     <div className="w-full p-10 h-screen overflow-y-auto">
-      {loading && <p>Loading...</p>}
+      {loading && <Loading />}
 
       {view === "list" && (
         <>

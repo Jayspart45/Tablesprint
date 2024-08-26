@@ -3,6 +3,7 @@ import Flex from "../../shared/Flex";
 import Input from "../../shared/Input";
 import Select from "../../shared/Select";
 import { toast } from "react-toastify";
+import CustomFileInput from "../../shared/CustomFileInput";
 
 export type SubCategory = {
   id: number;
@@ -10,7 +11,7 @@ export type SubCategory = {
   sequence: string;
   image_url: string;
   categoryId: number;
-  status: string;
+  status?: string;
   Category?: { id: number };
 };
 
@@ -19,7 +20,7 @@ interface SubcategoryComponentProps {
   data?: SubCategory;
   onSubmit: (formData: FormData) => void;
   setView: (view: "list" | "add" | "edit") => void;
-  categories: { id: number; name: string }[]; 
+  categories: { id: number; name: string }[];
 }
 
 const SubCategoryComponent: React.FC<SubcategoryComponentProps> = ({
@@ -33,12 +34,14 @@ const SubCategoryComponent: React.FC<SubcategoryComponentProps> = ({
     subcategoryName: string;
     sequence: string;
     imageFile: File | null;
+    status: string;
     categoryId: number;
   }>({
     subcategoryName: "",
     sequence: "",
     imageFile: null,
-    categoryId: categories.length > 0 ? categories[0].id : 0, 
+    categoryId: categories.length > 0 ? categories[0].id : 0,
+    status: data?.status || "",
   });
 
   useEffect(() => {
@@ -48,26 +51,19 @@ const SubCategoryComponent: React.FC<SubcategoryComponentProps> = ({
         sequence: data.sequence,
         imageFile: null,
         categoryId: data.Category?.id || categories[0].id,
+        status: data?.status || "",
       });
     }
   }, [data]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
-  };
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files && files[0]) {
-      setFormData((prevData) => ({
-        ...prevData,
-        imageFile: files[0],
-      }));
-    }
   };
 
   const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -77,12 +73,19 @@ const SubCategoryComponent: React.FC<SubcategoryComponentProps> = ({
     }));
   };
 
+  const handleFileChange = (file: File | null) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      imageFile: file,
+    }));
+  };
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const submissionData = new FormData();
     submissionData.append("name", formData.subcategoryName);
     submissionData.append("sequence", formData.sequence);
+    submissionData.append("status", formData.status);
     submissionData.append("category_id", formData.categoryId.toString());
     if (formData.imageFile) {
       submissionData.append("image_url", formData.imageFile);
@@ -92,7 +95,7 @@ const SubCategoryComponent: React.FC<SubcategoryComponentProps> = ({
     }
 
     try {
-       onSubmit(submissionData);
+      onSubmit(submissionData);
       toast.success("Subcategory submitted successfully.");
     } catch (error) {
       console.error("Failed to submit:", error);
@@ -127,6 +130,7 @@ const SubCategoryComponent: React.FC<SubcategoryComponentProps> = ({
           placeholder="Sequence"
         />
         <Select
+          title="Category name"
           value={formData.categoryId.toString()}
           onChange={handleCategoryChange}
         >
@@ -137,14 +141,26 @@ const SubCategoryComponent: React.FC<SubcategoryComponentProps> = ({
           ))}
         </Select>
 
-        <Input type="file" accept="image/*" onChange={handleImageChange} />
-        {data?.image_url && (
-          <img
-            src={data.image_url}
-            alt="Preview"
-            className="mt-2 w-32 h-32 object-cover"
-          />
+        {data && (
+            <Select
+              title="status"
+              name="status"
+              value={formData.status}
+              onChange={handleInputChange}
+              className="mt-1 w-full border border-gray-300 rounded-md"
+            >
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+            </Select>
         )}
+        <CustomFileInput
+          onFileChange={handleFileChange}
+          imageUrl={
+            formData.imageFile
+              ? URL.createObjectURL(formData.imageFile)
+              : data?.image_url
+          }
+        />
       </form>
       <Flex className="w-full justify-end">
         <button

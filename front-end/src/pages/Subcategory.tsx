@@ -10,6 +10,7 @@ import SubCategoryComponent from "../components/SubCategory/SubCategoryComponent
 import { toast } from "react-toastify";
 import Hero from "../components/SubCategory/Hero";
 import { getCategoryData } from "../api/categoryApi";
+import Loading from "../shared/Loading";
 
 const SubCategory: React.FC = () => {
   const [data, setData] = useState<SubCategory[]>([]);
@@ -27,7 +28,6 @@ const SubCategory: React.FC = () => {
       try {
         const res = await getSubCategoryData();
         setData(res);
-
         const categoriesData = await getCategoryData();
         setCategories(categoriesData);
       } catch (error) {
@@ -56,6 +56,7 @@ const SubCategory: React.FC = () => {
 
   const handleAddSubmit = async (formData: FormData) => {
     try {
+
       await addSubCategory(formData);
       const updatedData = await getSubCategoryData();
       setData(updatedData);
@@ -83,7 +84,7 @@ const SubCategory: React.FC = () => {
 
   return (
     <div className="w-full p-10 h-screen overflow-y-auto">
-      {loading && <p>Loading...</p>}
+      {loading && <Loading />}
 
       {view === "list" && (
         <>

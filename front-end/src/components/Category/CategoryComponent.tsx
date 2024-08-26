@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import Flex from "../../shared/Flex";
 import Input from "../../shared/Input";
+import CustomFileInput from "../../shared/CustomFileInput";
+import Select from "../../shared/Select";
 
 export type Category = {
   id: number;
@@ -27,10 +29,12 @@ const CategoryComponent: React.FC<CategoryComponentProps> = ({
     categoryName: string;
     sequence: string;
     imageFile: File | null;
+    status: string;
   }>({
     categoryName: "",
     sequence: "",
     imageFile: null,
+    status: "",
   });
 
   useEffect(() => {
@@ -39,11 +43,14 @@ const CategoryComponent: React.FC<CategoryComponentProps> = ({
         categoryName: data.name,
         sequence: data.sequence,
         imageFile: null,
+        status: data.status,
       });
     }
   }, [data]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
@@ -51,14 +58,11 @@ const CategoryComponent: React.FC<CategoryComponentProps> = ({
     }));
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files && files[0]) {
-      setFormData((prevData) => ({
-        ...prevData,
-        imageFile: files[0],
-      }));
-    }
+  const handleFileChange = (file: File | null) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      imageFile: file,
+    }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -73,6 +77,7 @@ const CategoryComponent: React.FC<CategoryComponentProps> = ({
     if (data?.id) {
       submissionData.append("id", data.id.toString());
     }
+    submissionData.append("status", formData.status);
 
     onSubmit(submissionData);
   };
@@ -93,17 +98,29 @@ const CategoryComponent: React.FC<CategoryComponentProps> = ({
           type="number"
           value={formData.sequence}
           onChange={handleInputChange}
-          placeholder="Sequence"
+          placeholder="Category Sequence"
         />
 
-        <Input type="file" accept="image/*" onChange={handleImageChange} />
-        {data?.image_url && (
-          <img
-            src={data.image_url}
-            alt="Preview"
-            className="mt-2 w-32 h-32 object-cover"
-          />
+        {formData.status && (
+            <Select
+              title="status"
+              name="status"
+              value={formData.status}
+              onChange={handleInputChange}
+              className="block mt-1 w-full border border-gray-300 rounded-md"
+            >
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+            </Select>
         )}
+        <CustomFileInput
+          onFileChange={handleFileChange}
+          imageUrl={
+            formData.imageFile
+              ? URL.createObjectURL(formData.imageFile)
+              : data?.image_url
+          }
+        />
       </form>
       <Flex className="w-full justify-end">
         <button
@@ -115,7 +132,6 @@ const CategoryComponent: React.FC<CategoryComponentProps> = ({
         </button>
         <button
           onClick={handleSubmit}
-          type="submit"
           className="bg-primary text-secondary rounded-xl px-4 py-2"
         >
           Save

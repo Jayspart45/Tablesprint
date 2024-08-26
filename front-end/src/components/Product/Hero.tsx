@@ -5,6 +5,7 @@ import { FaEdit, FaSort } from "react-icons/fa";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import type { Product } from "./ProductComponent";
 import ConfirmModal from "../../shared/ConfirmModal";
+import { IoCubeOutline } from "react-icons/io5";
 
 interface ProductProps {
   data: Product[];
@@ -103,7 +104,7 @@ const Product: React.FC<ProductProps> = ({
             row.original.status == "active" ? "text-green-500" : "text-red-500"
           }`}
         >
-          {row.original.status == "active"?"Active":"InActive"}
+          {row.original.status == "active" ? "Active" : "InActive"}
         </span>
       ),
     },
@@ -112,10 +113,14 @@ const Product: React.FC<ProductProps> = ({
       header: "Action",
       cell: ({ row }) => (
         <div className="flex">
-          <button onClick={() => handleEdit(row.original)}>
+          <button
+            className="text-gray-500"
+            onClick={() => handleEdit(row.original)}
+          >
             <FaEdit size={24} />
           </button>
           <button
+            className="text-gray-500"
             onClick={() => {
               setItemToDelete(row.original);
               setIsModalOpen(true);
@@ -138,6 +143,7 @@ const Product: React.FC<ProductProps> = ({
   return (
     <div>
       <DataTable
+        img={<IoCubeOutline size={24} />}
         title={"Product"}
         data={data}
         columns={columns}

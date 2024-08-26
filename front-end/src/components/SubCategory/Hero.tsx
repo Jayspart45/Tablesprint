@@ -5,6 +5,7 @@ import { MdOutlineDeleteOutline } from "react-icons/md";
 import { SubCategory } from "./SubCategoryComponent";
 import ConfirmModal from "../../shared/ConfirmModal";
 import { useState } from "react";
+import { CiBoxList } from "react-icons/ci";
 
 interface HeroProps {
   data: SubCategory[];
@@ -102,7 +103,7 @@ const Hero: React.FC<HeroProps> = ({
             row.original.status == "active" ? "text-green-500" : "text-red-500"
           }`}
         >
-          {row.original.status == "active"?"Active":"InActive"}
+          {row.original.status == "active" ? "Active" : "InActive"}
         </span>
       ),
     },
@@ -111,10 +112,14 @@ const Hero: React.FC<HeroProps> = ({
       header: "Action",
       cell: ({ row }) => (
         <div className="flex">
-          <button onClick={() => handleEdit(row.original)}>
+          <button
+            className="text-gray-500"
+            onClick={() => handleEdit(row.original)}
+          >
             <FaEdit size={24} />
           </button>
           <button
+            className="text-gray-500"
             onClick={() => {
               setItemToDelete(row.original);
               setIsModalOpen(true);
@@ -138,6 +143,7 @@ const Hero: React.FC<HeroProps> = ({
   return (
     <div>
       <DataTable
+        img={<CiBoxList size={24} />}
         title={"Sub Category"}
         data={data}
         columns={columns}

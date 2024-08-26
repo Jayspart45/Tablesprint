@@ -17,11 +17,12 @@ import {
   TableHeader,
   TableRow,
 } from "../shadcn/ui/table";
-import React from "react";
+import React, { ReactNode } from "react";
 import Input from "./Input";
 import { BiCategory } from "react-icons/bi";
 
 interface DataTableProps<TData, TValue> {
+  img: ReactNode;
   title: string;
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
@@ -29,12 +30,15 @@ interface DataTableProps<TData, TValue> {
 }
 
 export function DataTable<TData, TValue>({
+  img,
   title,
   columns,
   data,
   setView,
 }: DataTableProps<TData, TValue>) {
-  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [sorting, setSorting] = React.useState<SortingState>([
+    { id: "sequence", desc: false },
+  ]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
@@ -56,7 +60,7 @@ export function DataTable<TData, TValue>({
     <div className="rounded-md border">
       <div className="flex items-center py-4 justify-evenly">
         <h1 className="flex items-center gap-2 font-semibold">
-          <BiCategory size={24} />
+          {img}
           {title}
         </h1>
 

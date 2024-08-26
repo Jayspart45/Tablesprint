@@ -3,6 +3,7 @@ import Flex from "../../shared/Flex";
 import Input from "../../shared/Input";
 import Select from "../../shared/Select";
 import { toast } from "react-toastify";
+import CustomFileInput from "../../shared/CustomFileInput";
 
 export type Product = {
   id: number;
@@ -10,9 +11,9 @@ export type Product = {
   image_url: string;
   categoryId: number;
   subcategoryId: number;
-  status?: string; 
+  status?: string;
   Category?: { id: number; name: string };
-  SubCategory?: { id: number; name: string };
+  SubCategory?: { id: number; name: string; Category: { id: number; name: string } };
 };
 
 interface ProductComponentProps {
@@ -20,8 +21,8 @@ interface ProductComponentProps {
   data?: Product;
   onSubmit: (formData: FormData) => void;
   setView: (view: "list" | "add" | "edit") => void;
-  categories: { id: number; name: string }[]; 
-  subcategories: { id: number; name: string }[]; 
+  categories: { id: number; name: string }[];
+  subcategories: { id: number; name: string; Category: { id: number; name: string } }[]; // Updated to match your data structure
 }
 
 const ProductComponent: React.FC<ProductComponentProps> = ({
@@ -36,13 +37,19 @@ const ProductComponent: React.FC<ProductComponentProps> = ({
     productName: string;
     imageFile: File | null;
     categoryId: number;
+    status: string;
     subcategoryId: number;
   }>({
     productName: "",
     imageFile: null,
-    categoryId: categories.length > 0 ? categories[0].id : 0, 
-    subcategoryId: subcategories.length > 0 ? subcategories[0].id : 0, 
+    categoryId: categories.length > 0 ? categories[0].id : 0,
+    subcategoryId: subcategories.length > 0 ? subcategories[0].id : 0,
+    status: data?.status || "",
   });
+
+  const [filteredSubcategories, setFilteredSubcategories] = useState<
+    { id: number; name: string }[]
+  >([]);
 
   useEffect(() => {
     if (data) {
@@ -51,26 +58,27 @@ const ProductComponent: React.FC<ProductComponentProps> = ({
         imageFile: null,
         categoryId: data.Category?.id || categories[0].id,
         subcategoryId: data.SubCategory?.id || subcategories[0].id,
+        status: data?.status || "",
       });
     }
-  }, [data]);
+  }, [data, categories, subcategories]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  useEffect(() => {
+    // Filter subcategories based on the selected category
+    const filtered = subcategories.filter(
+      (sub) => sub.Category.id === formData.categoryId
+    );
+    setFilteredSubcategories(filtered);
+  }, [formData.categoryId, subcategories]);
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
-  };
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files && files[0]) {
-      setFormData((prevData) => ({
-        ...prevData,
-        imageFile: files[0],
-      }));
-    }
   };
 
   const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -87,12 +95,20 @@ const ProductComponent: React.FC<ProductComponentProps> = ({
     }));
   };
 
+  const handleFileChange = (file: File | null) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      imageFile: file,
+    }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const submissionData = new FormData();
     submissionData.append("name", formData.productName);
     submissionData.append("category_id", formData.categoryId.toString());
+    submissionData.append("status", formData.status);
     submissionData.append("subcategory_id", formData.subcategoryId.toString());
     if (formData.imageFile) {
       submissionData.append("image_url", formData.imageFile);
@@ -131,6 +147,7 @@ const ProductComponent: React.FC<ProductComponentProps> = ({
         />
 
         <Select
+          title="Category name"
           value={formData.categoryId.toString()}
           onChange={handleCategoryChange}
         >
@@ -141,24 +158,37 @@ const ProductComponent: React.FC<ProductComponentProps> = ({
           ))}
         </Select>
         <Select
+          title="Sub Category name"
           value={formData.subcategoryId.toString()}
           onChange={handleSubcategoryChange}
         >
-          {subcategories.map((subcategory) => (
+          {filteredSubcategories.map((subcategory) => (
             <option key={subcategory.id} value={subcategory.id}>
               {subcategory.name}
             </option>
           ))}
         </Select>
 
-        <Input type="file" accept="image/*" onChange={handleImageChange} />
-        {data?.image_url && (
-          <img
-            src={data.image_url}
-            alt="Preview"
-            className="mt-2 w-32 h-32 object-cover"
-          />
+        {data && (
+          <Select
+            title="status"
+            name="status"
+            value={formData.status}
+            onChange={handleInputChange}
+            className="mt-1 w-full border border-gray-300 rounded-md"
+          >
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </Select>
         )}
+        <CustomFileInput
+          onFileChange={handleFileChange}
+          imageUrl={
+            formData.imageFile
+              ? URL.createObjectURL(formData.imageFile)
+              : data?.image_url
+          }
+        />
       </form>
       <Flex className="w-full justify-end">
         <button
